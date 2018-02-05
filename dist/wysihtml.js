@@ -106,7 +106,7 @@ wysihtml.polyfills = function(win, doc) {
         if (originalTarget) {
           if (originalTarget.type === 'form') {
             // The selection parameters are not present for all form elements
-            if (typeof originalTarget.start !== 'undefined' && typeof originalTarget.end !== 'undefined') {
+            if (typeof originalTarget.start !== 'undefined' && typeof originalTarget.end !== 'undefined' && originalTarget.node.setSelectionRange && /text|search|password|tel|url/i.test(originalTarget.node.type || '')) {
               originalTarget.node.setSelectionRange(originalTarget.start, originalTarget.end);
             }
             originalTarget.node.focus();
@@ -12134,7 +12134,7 @@ wysihtml.Commands = Base.extend(
 
   function getOptions(value) {
     var options = typeof value === 'object' ? value : {'href': value};
-    return wysihtml.lang.object({}).merge(nodeOptions).merge({'attribute': value}).get();
+    return wysihtml.lang.object({}).merge(nodeOptions).merge({'attribute': options}).get();
   }
 
   wysihtml.commands.createLink  = {
