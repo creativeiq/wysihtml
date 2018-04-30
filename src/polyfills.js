@@ -18,12 +18,14 @@ wysihtml.polyfills = function(win, doc) {
 
         if (document.activeElement) {
           if (document.activeElement.nodeType === 1 && ['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'].indexOf(document.activeElement.nodeName) > -1) {
-            originalTarget = {
-              type: 'form',
-              node: document.activeElement,
-              start: document.activeElement.selectionStart,
-              end: document.activeElement.selectionEnd,
-            };
+            if (!!document.activeElement.setSelectionRange && /text|search|password|tel|url/i.test(document.activeElement.type || '')) {
+              originalTarget = {
+                type: 'form',
+                node: document.activeElement,
+                start: document.activeElement.selectionStart,
+                end: document.activeElement.selectionEnd,
+              };
+            }
           } else {
             s = win.getSelection();
             if (s && s.anchorNode) {
@@ -59,7 +61,7 @@ wysihtml.polyfills = function(win, doc) {
         if (originalTarget) {
           if (originalTarget.type === 'form') {
             // The selection parameters are not present for all form elements
-            if (typeof originalTarget.start !== 'undefined' && typeof originalTarget.end !== 'undefined' && originalTarget.node.setSelectionRange && /text|search|password|tel|url/i.test(originalTarget.node.type || '')) {
+            if (typeof originalTarget.start !== 'undefined' && typeof originalTarget.end !== 'undefined' && !!originalTarget.node.setSelectionRange && /text|search|password|tel|url/i.test(originalTarget.node.type || '')) {
               originalTarget.node.setSelectionRange(originalTarget.start, originalTarget.end);
             }
             originalTarget.node.focus();
